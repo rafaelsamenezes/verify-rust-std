@@ -34,4 +34,4 @@ jobs:
 
       # Step 3: Run goto-transcoder
       - name: Run goto-transcoder
-        run: ./scripts/run-goto-transcoder
+        run: ./scripts/run-goto-transcoder.sh
