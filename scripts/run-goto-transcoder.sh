@@ -32,6 +32,9 @@ ls $contract_folder | grep "$supported_regex" | grep -v .symtab.out > ./goto-tra
 
 cd goto-transcoder
 while IFS= read -r line; do
+    # I expect each line to be similar to 'core-58cefd8dce4133f9__RNvNtNtCs9uKEoH8KKW4_4core3num6verify24checked_unchecked_add_i8.out'
+    # The entrypoint of the contract would be _RNvNtNtCs9uKEoH8KKW4_4core3num6verify24checked_unchecked_add_i8
+    # So we use awk to extract this name.
     contract=`echo "$line" | awk '{match($0, /(_RNv.*).out/, arr); print arr[1]}'`
     echo "Processing: $contract"
     if [[ -z "$contract" ]]; then
