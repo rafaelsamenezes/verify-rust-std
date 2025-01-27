@@ -33,8 +33,10 @@ jobs:
         run: ./scripts/run-kani.sh --kani-args --keep-temps --only-codegen --target-dir kani/contracts
 
       # Debug: Check contracts
-      - name: List contracts found
-        run: ls kani/contracts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: contracts
+          path: kani/contracts
 
       # Step 3: Run goto-transcoder
       - name: Run goto-transcoder
