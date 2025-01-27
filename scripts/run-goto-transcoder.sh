@@ -5,7 +5,7 @@ set -e
 ##############
 # PARAMETERS #
 ##############
-contract_folder=$1
+contract_folder=$1/kani_verify_std/target/x86_64-unknown-linux-gnu/debug/deps
 supported_regex=$2
 unsupported_regex=neg
 

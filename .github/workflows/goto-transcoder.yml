@@ -30,12 +30,12 @@ jobs:
 
       # Step 2: Generate contracts programs
       - name: Generate contracts
-        run: ./scripts/run-kani.sh --kani-args --keep-temps --only-codegen --target-dir contracts
+        run: ./scripts/run-kani.sh --kani-args --keep-temps --only-codegen --target-dir kani/contracts
 
       # Debug: Check contracts
       - name: List contracts found
-        run: ls contracts
+        run: ls kani/contracts
 
       # Step 3: Run goto-transcoder
       - name: Run goto-transcoder
-        run: ./scripts/run-goto-transcoder.sh contracts checked_unchecked.*.out
+        run: ./scripts/run-goto-transcoder.sh kani/contracts checked_unchecked.*.out
