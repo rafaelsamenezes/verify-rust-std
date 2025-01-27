@@ -5,8 +5,8 @@ set -e
 ##############
 # PARAMETERS #
 ##############
-contract_folder=target/kani_verify_std/target/x86_64-unknown-linux-gnu/debug/deps
-supported_regex=$1
+contract_folder=$1
+supported_regex=$2
 unsupported_regex=neg
 
 goto_transcoder_git=https://github.com/rafaelsamenezes/goto-transcoder
