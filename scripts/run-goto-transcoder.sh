@@ -28,7 +28,7 @@ if [ ! -d "goto-transcoder" ]; then
     cd ..
 fi
 
-print "Contracts"
+echo "Contracts"
 ls $contract_folder | grep -v .symtab.out > ./goto-transcoder/_contracts.txt
 
 ls $contract_folder | grep "$supported_regex" | grep -v .symtab.out > ./goto-transcoder/_contracts.txt
