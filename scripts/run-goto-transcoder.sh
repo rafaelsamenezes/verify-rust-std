@@ -43,10 +43,17 @@ while IFS= read -r line; do
     if echo "$contract" | grep -q "$unsupported_regex"; then
         continue
     fi
+    echo "$contract" >> _verified.txt
     echo "Running: goto-transcoder $contract $contract_folder/$line $contract.esbmc.goto"
     cargo run cbmc2esbmc $contract ../$contract_folder/$line $contract.esbmc.goto
     ./linux-release/bin/esbmc --binary $contract.esbmc.goto
 done < "_contracts.txt"
 
-rm "_contracts.txt"
+echo "Entrypoints"
+cat _contracts.txt
+echo "Supported"
+cat _verified.txt
+
+rm _contracts.txt
+rm _verified.txt
 cd ..
