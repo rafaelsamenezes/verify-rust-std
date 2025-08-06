@@ -24,7 +24,7 @@ if [ ! -d "goto-transcoder" ]; then
     cd goto-transcoder
     wget $esbmc_url
     unzip esbmc-linux.zip
-    chmod +x ./linux-release/bin/esbmc
+    chmod +x ./bin/esbmc
     cd ..
 fi
 
@@ -45,7 +45,7 @@ while IFS= read -r line; do
     fi
     echo "Running: goto-transcoder $contract $contract_folder/$line $contract.esbmc.goto"
     cargo run cbmc2esbmc  ../$contract_folder/$line $contract.esbmc.goto
-    ./linux-release/bin/esbmc --cprover --function $contract --binary resources/library.goto $contract.esbmc.goto
+    ./bin/esbmc --cprover --function $contract --binary resources/library.goto $contract.esbmc.goto
 done < "_contracts.txt"
 
 rm "_contracts.txt"
