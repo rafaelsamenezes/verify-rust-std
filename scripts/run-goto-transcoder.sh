@@ -10,7 +10,7 @@ supported_regex=$2
 unsupported_regex=neg
 
 goto_transcoder_git=https://github.com/esbmc/goto-transcoder
-esbmc_url=https://github.com/esbmc/esbmc/releases/download/nightly-39b012f9f7f7dad188708a9eaf4bbbc5faa3b4f7/esbmc-linux.zip
+esbmc_url=https://github.com/esbmc/esbmc/releases/download/v7.10/esbmc-linux.zip
 
 ##########
 # SCRIPT #
