@@ -57,3 +57,6 @@ goto-transcoder
 
 #/target
 testable-simd-models/target
+
+# ESBMC build tree created by scripts/run-goto-transcoder.sh
+esbmc_build/

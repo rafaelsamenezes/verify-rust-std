@@ -1,0 +1,36 @@
+# Harness families that ESBMC verifies SUCCESSFUL from Kani's CBMC goto-binaries.
+#
+# One POSIX extended regular expression per line; matched against the mangled
+# harness symbol.  Blank lines and lines starting with '#' are ignored.
+#
+# Adding a line here widens the regression.  Before adding one, confirm that
+# *every* harness the expression matches verifies SUCCESSFUL — a family that is
+# only partly supported must be narrowed (see the _unchecked_ and f16 carve-outs
+# below), otherwise the regression will fail on the members that do not.
+#
+# Last re-measured 2026-08-26 against esbmc/esbmc master on the corpus generated
+# from this tree: 211 harnesses, all SUCCESSFUL, none slower than 5 s.
+
+# core::num — unchecked arithmetic
+checked_unchecked_
+unchecked_mul_.*_small
+
+# core::num::nonzero
+nonzero_check_(min|max)_for
+nonzero_check_bitor_
+# ... but not nonzero_check_from_mut_unchecked_*, which time out.
+nonzero_check_from_mut_(i|u)(8|16|32|64|128|size)$
+
+# core::convert — NonZero integer conversions.
+# The _should_panic variants legitimately report FAILED, so they are excluded.
+check_nonzero_int_try_from_.*check_nonzero_int_try_from_nonzero_int$
+check_nonzero_int_try_from_.*infallible$
+
+# core::num — float-to-int conversion.
+# f16 sources are not yet supported and report FAILED; f32/f64 are fine.
+checked_f(32|64)_to_int_unchecked
+_to_int_unchecked3f(32|64).*check_float_to_int_unchecked$
+
+# core::ptr
+non_null_check_(len|is_empty)
+proof_for_index_range_.*unchecked

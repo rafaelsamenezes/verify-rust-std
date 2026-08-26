@@ -1,6 +1,10 @@
-# This workflow executes the supported contracts in goto-transcoder
+# This workflow verifies the supported harnesses with ESBMC.
+#
+# ESBMC reads Kani's CBMC goto-binaries natively, so the out-of-process
+# goto-transcoder converter is no longer involved.  The file and job names are
+# kept because the job is a required status check.
 
-name: Run GOTO Transcoder (ESBMC)
+name: Run ESBMC
 on:
   workflow_dispatch:
   merge_group:
@@ -12,6 +16,7 @@ on:
       - '.github/workflows/goto-transcoder.yml'
       - 'scripts/run-kani.sh'
       - 'scripts/run-goto-transcoder.sh'
+      - 'tool_config/esbmc-supported-harnesses.txt'
 
 defaults:
   run:
@@ -28,10 +33,39 @@ jobs:
         with:
           submodules: true
 
-      # Step 2: Generate contracts programs
+      # Step 2: Resolve which ESBMC commit we are about to build, so the cache
+      # key below changes exactly when ESBMC does.
+      - name: Resolve ESBMC revision
+        id: esbmc-rev
+        run: |
+          sha=$(git ls-remote https://github.com/esbmc/esbmc.git refs/heads/master | cut -f1)
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "Building against esbmc/esbmc@$sha"
+
+      - name: Cache ESBMC build
+        id: esbmc-cache
+        uses: actions/cache@v4
+        with:
+          path: esbmc_build/build/src/esbmc/esbmc
+          key: esbmc-${{ runner.os }}-${{ steps.esbmc-rev.outputs.sha }}
+
+      - name: Install ESBMC build dependencies
+        if: steps.esbmc-cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get --yes update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes \
+            cmake ninja-build bison flex gperf curl wget unzip xz-utils \
+            libboost-all-dev libmpfr-dev libbz2-dev liblzma-dev libncurses-dev \
+            python3 python-is-python3 g++-multilib linux-libc-dev
+
+      # Step 3: Generate the goto-binaries
       - name: Generate contracts
         run: ./scripts/run-kani.sh --kani-args --keep-temps --only-codegen --target-dir kani/contracts
 
-      # Step 3: Run goto-transcoder
-      - name: Run goto-transcoder
-        run: ./scripts/run-goto-transcoder.sh kani/contracts checked_unchecked.*.out
+      # Step 4: Verify them with ESBMC.  The harness families are listed in
+      # tool_config/esbmc-supported-harnesses.txt.
+      - name: Run ESBMC
+        env:
+          ESBMC_REF: ${{ steps.esbmc-rev.outputs.sha }}
+          ESBMC_BIN: ${{ steps.esbmc-cache.outputs.cache-hit == 'true' && 'esbmc_build/build/src/esbmc/esbmc' || '' }}
+        run: ./scripts/run-goto-transcoder.sh kani/contracts
